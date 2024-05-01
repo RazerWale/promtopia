@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
-import Provider from "./Provider";
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -13,12 +12,13 @@ const Nav = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    const setUpProviders = async () => {
-      const response = await getProviders();
-      setProviders(response);
-    };
-    setUpProviders();
+    (async () => {
+      const res = await getProviders();
+      setProviders(res);
+    })();
   }, []);
+  console.log(providers);
+
   return (
     <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
@@ -31,7 +31,6 @@ const Nav = () => {
         />
         <p className="logo_text">Promptopia</p>
       </Link>
-
       {/*Desktop Navigation*/}
       <div className="sm:flex hidden">
         {session?.user ? (
@@ -60,7 +59,9 @@ const Nav = () => {
                 <button
                   type="button"
                   key={provider.name}
-                  onClick={() => signIn(provider.id)}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
                   className="black_btn"
                 >
                   Sign In
@@ -69,7 +70,6 @@ const Nav = () => {
           </>
         )}
       </div>
-
       {/* Mobile Navigation*/}
       <div className="sm:hidden flex relative">
         {session?.user ? (
